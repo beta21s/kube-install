@@ -14,6 +14,7 @@ RED='\033[0;31m'
 # ***Disable Swap
 function disable-swap {
     swapoff -a
+    sed -i '/\sswap\s/d' /etc/fstab
     sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 }
 
