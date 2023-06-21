@@ -6,6 +6,7 @@
 #Usage       : Please make sure to run this script as ROOT or with ROOT permissions
 #Notes       : Supports ubuntu OS 18.04/20.04/22.04
 #==============================================================================
+
 NC='\033[0m'
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
@@ -18,7 +19,7 @@ function disable-swap {
     sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 }
 
-# ***load kernel modules for support containerd 
+# ***Load kernel modules for support containerd 
 function load-kernel-modules {
     tee /etc/modules-load.d/containerd.conf <<EOF
     overlay
@@ -67,7 +68,7 @@ function k8s-install {
         sudo apt-get install -y kubelet="${k8s_version}-00" kubeadm="${k8s_version}-00" kubectl="${k8s_version}-00"
 }
 
-# *** init K8s
+# ***Init K8s
 function k8s-init {
 	server_ip=$(ifconfig "$interface" | awk '/inet /{print substr($2,1)}')
 	echo -e "${GREEN} init k8s...${NC}"
@@ -79,7 +80,7 @@ function k8s-init {
         echo  -e "${GREEN} Please do not forget to join the other k8s nodes ${NC}"
 }
 
-# *** install cni
+# ***Install cni
 function install-cni {
         if [ "${cni_plugin}" == 1 ]
         then
@@ -97,7 +98,7 @@ function install-cni {
 
 }
 
-# *** Install Helm
+# ***Install Helm
 function install-helm {
 	if [ -x "$(command -v helm)" ]
     then
@@ -111,7 +112,7 @@ function install-helm {
 		
 }
 
-# ***  Install nvidia gpu operator
+# ***Install nvidia gpu operator
 function install-gpu-operator {
 	   echo  -e "${GREEN} installing NVIDIA GPU operator...${NC}"
 	   helm repo add nvidia https://nvidia.github.io/gpu-operator && helm repo update
@@ -121,9 +122,14 @@ function install-gpu-operator {
        echo  -e "${GREEN}NVIDIA GPU deployed${NC}"
 }
 
-
-echo -e "${YELLOW}Please select a task (1. install kubernetes master, 2. install kubernetes worker, 3. install gpu operator, 4. reset/delete kubernetes)${NC}"
+echo -e "${YELLOW}Please select a task:${NC}" 
+echo -e "${YELLOW}1. install kubernetes master${NC}" 
+echo -e "${YELLOW}2. install kubernetes worker${NC}" 
+echo -e "${YELLOW}3. install gpu operator${NC}" 
+echo -e "${YELLOW}4. reset/delete kubernetes${NC}"
+echo -e "${YELLOW}5. Get kubeadm token${NC}" 
 read task
+
 if [ "${task}" == "1" ]
 then
     echo -e "${GREEN} *** Please make sure inbound ports 6443,443,8080 are allowed *** ${NC}"
