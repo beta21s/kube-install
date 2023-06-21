@@ -1,10 +1,10 @@
 #!/bin/bash
-#description : This script will help to install k8s cluster (master / worker) and gpu operator
-#author	     : Moran Guy
-#date        : 19/10/2022
-#version     : 1.0
-#usage       : Please make sure to run this script as ROOT or with ROOT permissions
-#notes       : supports ubuntu OS 18.04/20.04/22.04
+#Description : This script will help to install k8s cluster (master / worker) and gpu operator
+#Author	     : Moran Guy and change truongtpa
+#Date        : 19/10/2022
+#Version     : 1.0
+#Usage       : Please make sure to run this script as ROOT or with ROOT permissions
+#Notes       : Supports ubuntu OS 18.04/20.04/22.04
 #==============================================================================
 NC='\033[0m'
 YELLOW='\033[0;33m'
