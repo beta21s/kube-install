@@ -54,13 +54,12 @@ function install-containerd {
                 sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
                 systemctl restart containerd
                 systemctl enable containerd
-
         fi
 }
 
 # ***Install K8s
 function k8s-install {
-	    sudo apt-get update
+	sudo apt-get update
         sudo apt-get install -y apt-transport-https ca-certificates curl
         sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
         echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
@@ -71,7 +70,7 @@ function k8s-install {
 
 # *** init K8s
 function k8s-init {
-	server_ip=$(curl -s ifconfig.me)
+	server_ip=$(ifconfig "$interface" | awk '/inet /{print substr($2,1)}')
 	echo -e "${GREEN} init k8s...${NC}"
         kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version=v${k8s_version} --token-ttl 186h --control-plane-endpoint=${server_ip}
         export KUBECONFIG=/etc/kubernetes/admin.conf
@@ -113,7 +112,7 @@ function install-helm {
 		
 }
 
-# ***  install nvidia gpu operator
+# ***  Install nvidia gpu operator
 function install-gpu-operator {
 	   echo  -e "${GREEN} installing NVIDIA GPU operator...${NC}"
 	   helm repo add nvidia https://nvidia.github.io/gpu-operator && helm repo update
@@ -122,8 +121,6 @@ function install-gpu-operator {
        kubectl wait pods -n gpu-operator  -l app=nvidia-operator-validator --for condition=Ready --timeout=1200s
        echo  -e "${GREEN}NVIDIA GPU deployed${NC}"
 }
-
-###START HERE###
 
 
 echo -e "${YELLOW}Please select a task (1. install kubernetes master, 2. install kubernetes worker, 3. install gpu operator, 4. reset/delete kubernetes)${NC}"
