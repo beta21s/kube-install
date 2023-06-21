@@ -5,7 +5,6 @@
 #Version     : 1.0
 #Usage       : Please make sure to run this script as ROOT or with ROOT permissions
 #Notes       : Supports ubuntu OS 18.04/20.04/22.04
-#==============================================================================
 
 NC='\033[0m'
 YELLOW='\033[0;33m'
@@ -62,7 +61,11 @@ function install-containerd {
 # ***Install K8s
 function k8s-install {
 	sudo apt-get update
-        sudo apt-get install -y apt-transport-https ca-certificates curl
+    sudo apt-get install -y apt-transport-https ca-certificates curl
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add 
+cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
 	sudo apt-get update
 	echo -e "${GREEN} installing kubectl kubeadm kubelet...${NC}"
         sudo apt-get install -y kubelet="${k8s_version}-00" kubeadm="${k8s_version}-00" kubectl="${k8s_version}-00"
@@ -112,7 +115,7 @@ function install-helm {
 		
 }
 
-# ***Install nvidia gpu operator
+# ***Install NVDIA GPU operator
 function install-gpu-operator {
 	   echo  -e "${GREEN} installing NVIDIA GPU operator...${NC}"
 	   helm repo add nvidia https://nvidia.github.io/gpu-operator && helm repo update
@@ -219,4 +222,8 @@ then
     else
         echo -e "${YELLOW}Operation aborted${NC}"
     fi
+elif [ "${task}" == "5" ]
+then
+    echo -e "${GREEN}Kubeadm token.${NC}"
+    sudo kubeadm token create --print-join-command
 fi
