@@ -62,10 +62,14 @@ function install-containerd {
 function k8s-install {
 	sudo apt-get update
         sudo apt-get install -y apt-transport-https ca-certificates curl
-        sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-        echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-	    sudo apt-get update
-	    echo -e "${GREEN} installing kubectl kubeadm kubelet...${NC}"
+
+ 	curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add 
+        cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+	deb http://apt.kubernetes.io/ kubernetes-xenial main
+	EOF
+ 
+ 	sudo apt-get update
+	echo -e "${GREEN} installing kubectl kubeadm kubelet...${NC}"
         sudo apt-get install -y kubelet="${k8s_version}-00" kubeadm="${k8s_version}-00" kubectl="${k8s_version}-00"
 }
 
